@@ -38,16 +38,19 @@ def print_bad(text):
 
 def main(tests_dir, timeout):
     import subprocess
+    import os
 
     test_paths = tests_dir.rglob("test.sh")
     timeouts = []
     failures = []
+    env = os.environ
+    env["RUNTESTS"] = "1"
     for test_path in test_paths:
         test_dir = test_path.parent
         print_info("\nRunning test: {}".format(test_dir))
         try:
             completed_process = subprocess.run(
-                ["sh", "test.sh"], cwd=test_dir, timeout=timeout
+                ["sh", "test.sh"], cwd=test_dir, timeout=timeout, env=env
             )
         except subprocess.TimeoutExpired:
             print_bad("Timeout")
